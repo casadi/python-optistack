@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/casadi/python-optistack.png?branch=master)](https://travis-ci.org/casadi/python-optistack)
 
 # optistack
-The goal of this project is to provide a Yalmip-like wrapper around the Python interface of [CasADi](http://casadi.org).
+The goal of this project is to provide a Yalmip-like wrapper around the Python interface of [CasADi](http://casadi.org), resulting in an easy and fast way to solve (parametric) NLPs. 
 
 Example:
 ```python
@@ -41,7 +41,7 @@ More functionality:
 `optivar` inherits from `casadi.MX` class. This means [all the usual operations](http://casadi.sourceforge.net/v2.4.1/api/html/d9/dc2/group__expression__tools.html) for `MX` are possible.
 
 
-
+Note: there is also a [matlab version](http://optistack.casadi.org) available.
 
 
 
