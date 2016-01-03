@@ -16,6 +16,8 @@ branches:
     - /.*appveyor.*/
 
 before_install:
+  - export MATPLOTLIBRC=`pwd`
+  - echo "backend : Template" >matplotlibrc
   - sudo apt-get update -qq
   - sudo apt-get install -y python-numpy python-scipy python-matplotlib 
   - pushd ../../
