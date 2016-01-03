@@ -1,0 +1,27 @@
+env: 
+  global: 
+    - CASADIVERSION=2.4.2
+    
+before_script:
+  - set -e
+
+script:
+  - popd
+  - cd examples
+
+  - python sysid.py && python multipleshooting.py && python misc.py && python inverse.py && python rosenbrock.py && python fit.py && python codegen.py
+  
+branches:
+  except:
+    - /.*appveyor.*/
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y python-numpy
+  - pushd ../../
+  - git clone https://github.com/casadi/testbot.git
+  - pushd testbot && recipes/setup.sh && popd
+  - wget http://sourceforge.net/projects/casadi/files/CasADi/$CASADIVERSION/linux/casadi-py27-np1.9.1-v$CASADIVERSION.tar.gz/download -O casadi.tar.gz
+  - mkdir casadi-build && tar -xf casadi.tar.gz -C casadi-build
+  - export PYTHONPATH=/home/travis/build/casadi-build/:/home/travis/build/casadi/python-optistack/
+language: cpp
