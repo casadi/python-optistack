@@ -4,7 +4,7 @@
 The goal of this project is to provide a Yalmip-like wrapper around the Python interface of [CasADi](http://casadi.org).
 
 Example:
-```mpython
+```python
 x = optivar()
 y = optivar()
 
