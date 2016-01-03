@@ -13,7 +13,7 @@ nlp = optisolve((1-x)**2+100*(y-x**2)**2,[x**2+y**2<=1, x+y>=0])
 print optival(x)
 print optival(y)
 ```
-http://sourceforge.net/projects/casadi/files/CasADi/2.4.2/linux/casadi-py27-np1.9.1-v2.4.2.tar.gz/download
+
 Installation:
  * Obtain CasADi for your version of Python:
 
