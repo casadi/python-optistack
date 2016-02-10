@@ -21,9 +21,9 @@ Windows   |   Linux     |    Mac
 ----------|-------------|--------------
 [Python 2.7](http://files.casadi.org/2.4.2/windows/casadi-py27-np1.9.1-v2.4.2.zip)  |    [Python 2.7](http://files.casadi.org/2.4.2/linux/casadi-py27-np1.9.1-v2.4.2.tar.gz) or later      | [Python 2.7](http://files.casadi.org/2.4.2/osx/casadi-py27-np1.9.1-v2.4.2.tar.gz) or later
 
- * Add the unzipped directory to the Python path (`import sys;sys.path.append('casadi_unzippeddir')`)
+ * Add the unzipped directory to the Python path (`import sys;sys.path.append(r"casadi_unzippeddir")`)
  * Obtain [Optistack](https://github.com/casadi/python-optistack/archive/master.zip) and unzip it.
- * Add the src directory to the Python path (`import sys;sys.path.append('optistack_unzippeddir')`)
+ * Add the src directory to the Python path (`import sys;sys.path.append(r"optistack_unzippeddir")`)
  * Run the above example to verify that the install succeeded
 
 
