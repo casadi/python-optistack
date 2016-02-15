@@ -19,11 +19,11 @@ def sort_constraints( gl ):
     gl_pure = []
     gl_equality = []
     for g in gl:
-        if g.isOperation(C.OP_LE) or g.isOperation(C.OP_LT):
-          gl_pure.append(g.getDep(0) - g.getDep(1))
+        if g.is_op(C.OP_LE) or g.is_op(C.OP_LT):
+          gl_pure.append(g.dep(0) - g.dep(1))
           gl_equality.append(False)
-        elif g.isOperation(C.OP_EQ):
-          gl_pure.append(g.getDep(0) - g.getDep(1))
+        elif g.is_op(C.OP_EQ):
+          gl_pure.append(g.dep(0) - g.dep(1))
           gl_equality.append(True)
         else:
             raise Exception('Constraint type unkown. Use ==, >= or <= .');

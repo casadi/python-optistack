@@ -1,6 +1,6 @@
 env: 
   global: 
-    - CASADIVERSION=2.4.2
+    - CASADIVERSION=3.0.0-rc2
     
 before_script:
   - set -e

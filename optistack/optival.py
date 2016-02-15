@@ -1,9 +1,10 @@
 from OptimizationObject import OptimizationObject
 import casadi as C
+import numpy as np
 
 def optival( *args ):
     if len(args)==1 and isinstance(args[0],OptimizationObject):
-      return args[0].optival().toArray()
+      return np.array(args[0].optival())
     symbols = OptimizationObject.get_primitives(args)
     
     hassymbols = False;
@@ -12,16 +13,17 @@ def optival( *args ):
        symbolsx = symbols["x"]
        hassymbols = True
     
-    f = C.MXFunction('f',symbolsx,args);
+    f = C.Function('f',symbolsx,args);
+    f_inputs = [];
     
     if hassymbols:
         for i,e in enumerate(symbolsx):
-           f.setInput(optival(e),i)
+           f_inputs.append(optival(e))
     
-    f.evaluate()
+    out = f(f_inputs)
     
     if len(args)==1:
-      return f.getOutput().toArray()
+      return np.array(out[0])
     else:
-      return [f.getOutput(i).toArray() for i in range(f.nOut())]
+      return [np.array(out[i]) for i in range(f.nOut())]
 
