@@ -8,7 +8,7 @@ before_script:
 script:
   - popd
   - cd examples
-
+  - echo "backend \: Template" > matplotlibrc
   - python sysid.py && python multipleshooting.py && python misc.py && python inverse.py && python rosenbrock.py && python fit.py && python codegen.py
   
 branches:
