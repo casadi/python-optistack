@@ -5,7 +5,7 @@ from rk4 import rk4
 N = 100
 
 # ode
-ode = lambda x,u: vertcat([u - x[0], x[0]])
+ode = lambda x,u: vertcat(u - x[0], x[0])
 
 # state: speed
 S = optivar(N+1,1,'S')
@@ -23,8 +23,8 @@ tf.setInit(1)
 g = []
 
 for k in range(N):
-   xk      = vertcat([S[k],   P[k]  ])
-   xk_plus = vertcat([S[k+1], P[k+1]])
+   xk      = vertcat(S[k],   P[k]  )
+   xk_plus = vertcat(S[k+1], P[k+1])
    
    # shooting constraint
    xf = rk4(lambda x,u: tf*ode(x,u),1.0/N,xk,U[k])

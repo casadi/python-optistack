@@ -20,7 +20,7 @@ def optival( *args ):
         for i,e in enumerate(symbolsx):
            f_inputs.append(optival(e))
     
-    out = f(f_inputs)
+    out = f.call(f_inputs)
     
     if len(args)==1:
       return np.array(out[0])
