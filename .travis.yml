@@ -1,6 +1,6 @@
 env: 
   global: 
-    - CASADIVERSION=2.4.2
+    - CASADIVERSION=3.0.0
     
 before_script:
   - set -e
@@ -8,7 +8,10 @@ before_script:
 script:
   - popd
   - cd examples
-
+  - |
+    cat <<EOF  > matplotlibrc
+    backend : Template
+    EOF
   - python sysid.py && python multipleshooting.py && python misc.py && python inverse.py && python rosenbrock.py && python fit.py && python codegen.py
   
 branches:
@@ -22,7 +25,7 @@ before_install:
     backend : Template
     EOF
   - sudo apt-get update -qq
-  - sudo apt-get install -y python-numpy python-scipy python-matplotlib 
+  - sudo apt-get install -y python-numpy python-scipy python-matplotlib
   - pushd ../../
   - wget http://sourceforge.net/projects/casadi/files/CasADi/$CASADIVERSION/linux/casadi-py27-np1.9.1-v$CASADIVERSION.tar.gz/download -O casadi.tar.gz
   - mkdir casadi-build && tar -xf casadi.tar.gz -C casadi-build

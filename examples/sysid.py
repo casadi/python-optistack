@@ -26,7 +26,7 @@ y  = MX.sym('y')
 dy = MX.sym('dy')
 u  = MX.sym('u')
 
-states = vertcat([y,dy])
+states = vertcat(y,dy)
 controls = u
 
 M = optivar()
@@ -34,35 +34,34 @@ c = optivar()
 k = optivar()
 k_NL = optivar()
 
-params = vertcat([M,c,k,k_NL])
+params = vertcat(M,c,k,k_NL)
 
-rhs = vertcat([dy, (u-k_NL*y**3-k*y-c*dy)/M])
+rhs = vertcat(dy, (u-k_NL*y**3-k*y-c*dy)/M)
 
 # Form an ode function
-ode = MXFunction('ode',[states,controls,params],[rhs])
+ode = Function('ode',[states,controls,params],[rhs])
 
 ############ Creating a simulator ##########
 N_steps_per_sample = 10
 dt = 1/fs/N_steps_per_sample
 
 # Build an integrator for this system: Runge Kutta 4 integrator
-k1 = ode([states,controls,params])
-k2 = ode([states+dt/2.0*k1[0],controls,params])
-k3 = ode([states+dt/2.0*k2[0],controls,params])
-k4 = ode([states+dt*k3[0],controls,params])
+k1 = ode(states,controls,params)
+k2 = ode(states+dt/2.0*k1[0],controls,params)
+k3 = ode(states+dt/2.0*k2[0],controls,params)
+k4 = ode(states+dt*k3[0],controls,params)
 
-states_final = states+dt/6.0*(k1[0]+2*k2[0]+2*k3[0]+k4[0])
+states_final = states+dt/6.0*(k1+2*k2+2*k3+k4)
 
 # Create a function that simulates one step propagation in a sample
-one_step = MXFunction('one_step',[states, controls, params],[states_final])
+one_step = Function('one_step',[states, controls, params],[states_final])
 
 X = states
 for i in range(N_steps_per_sample):
-    Xn = one_step([X, controls, params])
-    X = Xn[0]
+    X = one_step(X, controls, params)
 
 # Create a function that simulates all step propagation on a sample
-one_sample = MXFunction('one_sample',[states, controls, params], [X])
+one_sample = Function('one_sample',[states, controls, params], [X])
 
 # speedup trick: expand into scalar operations
 one_sample = one_sample.expand()
@@ -74,9 +73,8 @@ all_samples = one_sample.mapaccum('all_samples', N)
 # Choose an excitation signal
 u_data = 0.1*np.random.rand(N,1)
 
-x0 = DMatrix([0,0])
-all_samples_out = all_samples([x0, u_data, repmat(param_truth,1,N) ])
-X_measured = all_samples_out[0]
+x0 = DM([0,0])
+X_measured = all_samples(x0, u_data, repmat(param_truth,1,N) )
 
 y_data = X_measured[0,:].T
 
@@ -84,8 +82,7 @@ y_data = X_measured[0,:].T
 
 # Note, it is in general a good idea to scale your decision variables such
 # that they are in the order of ~0.1..100
-all_samples_out = all_samples([x0, u_data, repmat(params*scale,1,N) ])
-X_symbolic = all_samples_out[0]
+X_symbolic = all_samples(x0, u_data, repmat(params*scale,1,N) )
 
 e = y_data-X_symbolic[0,:].T
 
@@ -116,10 +113,9 @@ print 'Multiple shooting...'
 
 X = optivar(2, N)
 
-params_scale = vertcat([1e-6*M,c*1e-4,k,k_NL])
+params_scale = vertcat(1e-6*M,c*1e-4,k,k_NL)
 
-Xn = one_sample.map([X, u_data.T, params_scale])
-Xn = Xn[0]
+[Xn] = one_sample.map([X, u_data.T, params_scale])
 
 # gap-closing constraints
 gaps = Xn[:,:-1]-X[:,1:]
@@ -132,7 +128,7 @@ c.setInit(2.3)
 k.setInit(1)
 k_NL.setInit(4)
 
-x0 = horzcat([y_data, vertcat([np.diff(y_data.T).T*fs,0])])
+x0 = horzcat(y_data, vertcat(np.diff(y_data.T).T*fs,0))
 X.setInit(x0.T)
 
 options = {}

@@ -37,7 +37,7 @@ class OptimizationObject(C.MX):
                dep = args[0]
             
             try:
-                vars = C.symvar(C.veccat(el))
+                vars = C.symvar(C.veccat(*el))
             except:
                 vars = {}
             

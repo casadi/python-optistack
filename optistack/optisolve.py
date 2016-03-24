@@ -27,16 +27,16 @@ class optisolve:
         symbols = OptimizationObject.get_primitives([objective]+gl_pure)
 
         # helper functions for 'x'
-        X = C.veccat(symbols["x"])
-        helper = C.MXFunction('helper',[X],symbols["x"])
+        X = C.veccat(*symbols["x"])
+        helper = C.Function('helper',[X],symbols["x"])
 
-        helper_inv = C.MXFunction('helper_inv',symbols["x"],[X])
+        helper_inv = C.Function('helper_inv',symbols["x"],[X])
 
         # helper functions for 'p' if applicable
         if 'p' in symbols:
-          P = C.veccat(symbols["p"])
+          P = C.veccat(*symbols["p"])
 
-          self.Phelper_inv = C.MXFunction('Phelper_inv',symbols["p"],[P])
+          self.Phelper_inv = C.Function('Phelper_inv',symbols["p"],[P])
           
         else:
           P = C.MX.sym('p',0,1)
@@ -46,11 +46,11 @@ class optisolve:
             for p in gl_pure:
                g_helpers.append(C.MX.sym('g',p.sparsity())) 
             
-            G_helpers = C.veccat(g_helpers)
+            G_helpers = C.veccat(*g_helpers)
 
-            self.Ghelper = C.MXFunction('Ghelper',[G_helpers],g_helpers)
+            self.Ghelper = C.Function('Ghelper',[G_helpers],g_helpers)
 
-            self.Ghelper_inv = C.MXFunction('Ghelper_inv',g_helpers,[G_helpers])
+            self.Ghelper_inv = C.Function('Ghelper_inv',g_helpers,[G_helpers])
         
         codegen = False;
         if 'codegen' in options:
@@ -64,25 +64,25 @@ class optisolve:
         
         gl_pure_v = C.MX()
         if len(gl_pure)>0:
-           gl_pure_v = C.veccat(gl_pure)
+           gl_pure_v = C.veccat(*gl_pure)
 
-        if objective.isvector() and objective.numel()>1:
+        if objective.is_vector() and objective.numel()>1:
             F = C.vec(objective)
-            objective = 0.5*C.inner_prod(F,F)
-            FF = C.MXFunction('nlp',[X,P], [F])
+            objective = 0.5*C.dot(F,F)
+            FF = C.Function('nlp',[X,P], [F])
             JF = FF.jacobian()
-            J_out = JF([X,P])
+            J_out = JF.call([X,P])
             J = J_out[0].T;
-            H = C.mul(J,J.T)
+            H = C.mtimes(J,J.T)
             sigma = C.MX.sym('sigma')
-            Hf = C.MXFunction('H',C.hessLagIn(x=X,p=P,lam_f=sigma),C.hessLagOut(hess=sigma*H),opt)
+            Hf = C.Function('H',dict(x=X,p=P,lam_f=sigma,hess_gamma_x_x=sigma*C.triu(H)),['x', 'p', 'lam_f', 'lam_g'],['hess_gamma_x_x'],opt)
             if "expand" in options and options["expand"]:
-               Hf = C.SXFunction(Hf)
+               Hf = Hf.expand()
             options["hess_lag"] = Hf
         
-        nlp = C.MXFunction('nlp',C.nlpIn(x=X,p=P), C.nlpOut(f=objective,g=gl_pure_v),opt)
+        nlp = C.Function('nlp', {"x":X,"p":P,"f":objective,"g":gl_pure_v},["x","p"],["f","g"],opt)
 
-        self.solver = C.NlpSolver('solver','ipopt', nlp, options)
+        self.solver = C.nlpsol('solver','ipopt', nlp, options)
 
         # Save to class properties
         self.symbols      = symbols
@@ -93,7 +93,7 @@ class optisolve:
         self.resolve()
           
     def jacspy(self):
-        sparse(DMatrix(self.solver.jacG().output(),1)).spy()
+        sparse(DM(self.solver.jacG().output(),1)).spy()
     
     def resolve(self):
         # recall from class properties
@@ -101,50 +101,38 @@ class optisolve:
         helper       = self.helper
         helper_inv   = self.helper_inv
         gl_equality  = self.gl_equality
+        solver_inputs = dict()
         if len(gl_equality)>0:
+            Ghelper_inv_inputs = [[]]*self.Ghelper_inv.n_in()
             # compose lbg
             for i,e in enumerate(gl_equality):
                 if e:
-                    self.Ghelper_inv.setInput(0,i)
+                    Ghelper_inv_inputs[i] = 0
                 else:
-                    self.Ghelper_inv.setInput(-np.inf,i)
-            self.Ghelper_inv.evaluate()
-            self.solver.setInput(self.Ghelper_inv.getOutput(),'lbg')
-            self.solver.setInput(0,'ubg')
+                    Ghelper_inv_inputs[i] = -np.inf
+            solver_inputs["lbg"] = self.Ghelper_inv.call(Ghelper_inv_inputs)[0]
+            solver_inputs["ubg"] = 0
 
+        helper_in_inputs = [[]]*helper_inv.n_in()
+  
         # compose lbx
-        for i,e in enumerate(symbols["x"]):
-          helper_inv.setInput(e.lb,i)
+        solver_inputs["lbx"] = helper_inv.call([e.lb for e in symbols["x"]])[0]
 
-        helper_inv.evaluate()
-        self.solver.setInput(helper_inv.getOutput(),'lbx')
 
         # compose x0
-        for i,e in enumerate(symbols["x"]):
-          helper_inv.setInput(e.init,i)
-
-        helper_inv.evaluate();
-        self.solver.setInput(helper_inv.getOutput(),'x0')
+        solver_inputs["x0"] = helper_inv.call([e.init for e in symbols["x"]])[0]
 
         # compose ubx
-        for i,e in enumerate(symbols["x"]):
-          helper_inv.setInput(e.ub,i)
-
-        helper_inv.evaluate()
-        self.solver.setInput(helper_inv.getOutput(),'ubx')
+        solver_inputs["ubx"] = helper_inv.call([e.ub for e in symbols["x"]])[0]
 
         if 'p' in symbols:
             # compose p0
-            for i,e in enumerate(symbols["p"]):
-              self.Phelper_inv.setInput(e.value,i)
+            solver_inputs["p"] = self.Phelper_inv([e.value for e in symbols["p"]])[0]
 
-            self.Phelper_inv.evaluate()
-            self.solver.setInput(self.Phelper_inv.getOutput(),'p')
+        print solver_inputs
+        sol = self.solver.call(solver_inputs)
 
-        self.solver.evaluate()
-
-        helper.setInput(self.solver.getOutput('x'))
-        helper.evaluate()
+        out = helper.call([sol["x"]])
 
         for i,e in enumerate(symbols["x"]):
-          e.setValue(helper.getOutput(i))
+          e.setValue(out[i])

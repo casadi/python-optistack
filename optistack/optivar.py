@@ -12,11 +12,11 @@ class optivar(OptimizationObject):
     shorthand = 'x'
 
     def setInit(self,v):
-        self.init.set(v)
+        self.init[:,:] = v
     def setLb(self,v):
-        self.lb.set(v)
+        self.lb[:,:] = v
     def setUb(self,v):
-        self.ub.set(v)
+        self.ub[:,:] = v
     def __init__(self,*args):
        shape = 1
        if len(args)==1:
@@ -31,6 +31,6 @@ class optivar(OptimizationObject):
        
        import casadi
        OptimizationObject.__init__(self,shape,name)
-       self.lb = -casadi.inf*casadi.DMatrix.ones(self.sparsity())
-       self.ub = casadi.inf*casadi.DMatrix.ones(self.sparsity())
-       self.init = casadi.DMatrix.zeros(self.sparsity())
+       self.lb = -casadi.inf*casadi.DM.ones(self.sparsity())
+       self.ub = casadi.inf*casadi.DM.ones(self.sparsity())
+       self.init = casadi.DM.zeros(self.sparsity())

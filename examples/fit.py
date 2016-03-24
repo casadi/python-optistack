@@ -18,15 +18,15 @@ x = optivar(n,1,'x')
 
 # A naive way to do this is:
 t0 = time.time()
-e = mul(A,x)+b
-optisolve(0.5*mul(e.T,e))
+e = mtimes(A,x)+b
+optisolve(0.5*mtimes(e.T,e))
 print time.time()-t0
 
 x1 = optival(x)
 
 # Solving with Gauss-Newton: pass vector as objective
 t0 = time.time()
-e = mul(A,x)+b
+e = mtimes(A,x)+b
 optisolve(e)
 print time.time()-t0
 
