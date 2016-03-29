@@ -20,8 +20,15 @@ def sort_constraints( gl ):
     gl_equality = []
     for g in gl:
         if g.is_op(C.OP_LE) or g.is_op(C.OP_LT):
-          gl_pure.append(g.dep(0) - g.dep(1))
-          gl_equality.append(False)
+        
+            args = []
+            while g.is_op(C.OP_LE) or g.is_op(C.OP_LT):
+               args.append(g.dep(1))
+               g = g.dep(0)
+            args.append(g)
+            for i in range(len(args)-1):
+                gl_pure.append(args[i+1] - args[i])
+                gl_equality.append(False)
         elif g.is_op(C.OP_EQ):
           gl_pure.append(g.dep(0) - g.dep(1))
           gl_equality.append(True)
