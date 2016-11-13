@@ -1,10 +1,11 @@
 [![Build Status](https://travis-ci.org/casadi/python-optistack.png?branch=master)](https://travis-ci.org/casadi/python-optistack)
 
 # optistack
-The goal of this project is to provide a Yalmip-like wrapper around the Python interface of [CasADi](http://casadi.org), resulting in an easy and fast way to solve (parametric) NLPs. 
+The goal of this project is to provide a Yalmip-like wrapper around the Python interface of [CasADi](http://casadi.org), resulting in an easy and fast way to solve NLPs with [Ipopt](https://projects.coin-or.org/Ipopt) using exact sensitivities. 
 
-Example:
+Simple NLP:
 ```python
+from optistack import *
 x = optivar()
 y = optivar()
 
@@ -12,6 +13,26 @@ nlp = optisolve((1-x)**2+100*(y-x**2)**2,[x**2+y**2<=1, x+y>=0])
 
 print optival(x)
 print optival(y)
+```
+
+Parametric NLP:
+```python
+from optistack import *
+x=optivar(3,1)
+
+# parameter, fixed during optimization
+r=optipar()
+
+r.setValue(1)
+sol = optisolve(x[0]+x[1],[mtimes(x.T,x)==r])
+
+print optival(x) # [-0.7071;-0.7071;0]
+
+# adapt the value of the parameter
+r.setValue(2)
+sol.resolve()
+
+print optival(x) # [-1;-1;0]
 ```
 
 Installation:
