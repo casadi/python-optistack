@@ -4,7 +4,7 @@ env:
 
 
 dist: trusty
-language: generic
+language: minimal
 
 before_script:
   - set -e
