@@ -5,19 +5,25 @@ import numpy as np
 def optival( *args ):
     if len(args)==1 and isinstance(args[0],OptimizationObject):
       return np.array(args[0].optival())
-    symbols = OptimizationObject.get_primitives(args)
+    symbols_struct = OptimizationObject.get_primitives(args)
     
+    symbols = []
     hassymbols = False;
     symbolsx = [C.MX.sym('dummy')]; # bug in casadi typemaps: [] does not work
-    if 'x' in symbols:
-       symbolsx = symbols["x"]
+    if 'x' in symbols_struct:
+       symbols+=symbols_struct["x"]
        hassymbols = True
-    
-    f = C.Function('f',symbolsx,args);
+    if 'p' in symbols_struct:
+       symbols+=symbols_struct["p"]
+       hassymbols = True
+    if not hassymbols:
+      symbols = [MX.sym("dummy")]
+       
+    f = C.Function('f',symbols,args);
     f_inputs = [];
     
     if hassymbols:
-        for i,e in enumerate(symbolsx):
+        for i,e in enumerate(symbols):
            f_inputs.append(optival(e))
     
     out = f.call(f_inputs)

@@ -1,7 +1,11 @@
 env: 
   global: 
-    - CASADIVERSION=3.0.0
-    
+    - CASADIVERSION=3.1.0
+
+
+dist: trusty
+language: generic
+
 before_script:
   - set -e
 
@@ -29,5 +33,6 @@ before_install:
   - pushd ../../
   - wget http://sourceforge.net/projects/casadi/files/CasADi/$CASADIVERSION/linux/casadi-py27-np1.9.1-v$CASADIVERSION.tar.gz/download -O casadi.tar.gz
   - mkdir casadi-build && tar -xf casadi.tar.gz -C casadi-build
-  - export PYTHONPATH=/home/travis/build/casadi-build/:/home/travis/build/casadi/python-optistack/
-language: cpp
+  - ls casadi-build
+  - pwd
+  - export PYTHONPATH=$PYTHONPATH:/home/travis/build/casadi-build/:/home/travis/build/casadi/python-optistack/
