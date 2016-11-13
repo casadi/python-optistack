@@ -57,10 +57,8 @@ class optisolve:
             codegen = options["codegen"]
             del options["codegen"]
         
-        opt = dict()
         if codegen:
-            opt["jit"] = True;
-            opt["jit_options"] = {'flags':['-O3']}
+            options["jit"] = True
         
         gl_pure_v = C.MX()
         if len(gl_pure)>0:
@@ -80,7 +78,7 @@ class optisolve:
                Hf = Hf.expand()
             options["hess_lag"] = Hf
         
-        nlp = C.Function('nlp', {"x":X,"p":P,"f":objective,"g":gl_pure_v},["x","p"],["f","g"],opt)
+        nlp = {"x":X,"p":P,"f":objective,"g":gl_pure_v})
 
         self.solver = C.nlpsol('solver','ipopt', nlp, options)
 

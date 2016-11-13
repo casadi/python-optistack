@@ -19,7 +19,7 @@ Installation:
 
 Windows   |   Linux     |    Mac
 ----------|-------------|--------------
-[Python 2.7](http://files.casadi.org/3.0.0/windows/casadi-py27-np1.9.1-v3.0.0.zip)  |    [Python 2.7](http://files.casadi.org/3.0.0/linux/casadi-py27-np1.9.1-v3.0.0.tar.gz) or later      | [Python 2.7](http://files.casadi.org/3.0.0/osx/casadi-py27-np1.9.1-v3.0.0.tar.gz) or later
+[Python 2.7](http://files.casadi.org/3.1.0/windows/casadi-py27-np1.9.1-v3.1.0.zip)  |    [Python 2.7](http://files.casadi.org/3.1.0/linux/casadi-py27-np1.9.1-v3.1.0.tar.gz) or later      | [Python 2.7](http://files.casadi.org/3.1.0/osx/casadi-py27-np1.9.1-v3.1.0.tar.gz) or later
 
  * Add the unzipped directory to the Python path (`import sys;sys.path.append(r"casadi_unzippeddir")`)
  * Obtain [Optistack](https://github.com/casadi/python-optistack/archive/master.zip) and unzip it.
@@ -38,7 +38,7 @@ Obtain numeric results    | `value(x)`                  | `optival(x)`
 
 
 More functionality:
-`optivar` inherits from `casadi.MX` class. This means [all the usual operations](http://casadi.sourceforge.net/v3.0.0/api/html/d9/dc2/group__expression__tools.html) for `MX` are possible.
+`optivar` inherits from `casadi.MX` class. This means [all the usual operations](http://casadi.sourceforge.net/v3.1.0/api/html/d9/dc2/group__expression__tools.html) for `MX` are possible.
 
 
 Note: there is also a [matlab version](http://optistack.casadi.org) available.
