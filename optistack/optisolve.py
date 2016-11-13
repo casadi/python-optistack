@@ -78,7 +78,7 @@ class optisolve:
                Hf = Hf.expand()
             options["hess_lag"] = Hf
         
-        nlp = {"x":X,"p":P,"f":objective,"g":gl_pure_v})
+        nlp = {"x":X,"p":P,"f":objective,"g":gl_pure_v}
 
         self.solver = C.nlpsol('solver','ipopt', nlp, options)
 
