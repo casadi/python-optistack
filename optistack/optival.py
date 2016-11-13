@@ -11,10 +11,10 @@ def optival( *args ):
     hassymbols = False;
     symbolsx = [C.MX.sym('dummy')]; # bug in casadi typemaps: [] does not work
     if 'x' in symbols_struct:
-       symbol.append(symbols["x"])
+       symbols+=symbols_struct["x"]
        hassymbols = True
     if 'p' in symbols_struct:
-       symbol.append(symbols["p"])
+       symbols+=symbols_struct["p"]
        hassymbols = True
     if not hassymbols:
       symbols = [MX.sym("dummy")]

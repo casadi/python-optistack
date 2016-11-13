@@ -129,7 +129,6 @@ class optisolve:
             # compose p0
             solver_inputs["p"] = self.Phelper_inv([e.value for e in symbols["p"]])[0]
 
-        print solver_inputs
         sol = self.solver.call(solver_inputs)
 
         out = helper.call([sol["x"]])
