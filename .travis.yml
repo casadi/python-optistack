@@ -4,7 +4,7 @@ env:
 
 
 dist: trusty
-language: minimal
+language: generic
 
 before_script:
   - set -e
@@ -35,5 +35,4 @@ before_install:
   - mkdir casadi-build && tar -xf casadi.tar.gz -C casadi-build
   - ls casadi-build
   - pwd
-  - export PYTHONPATH=/home/travis/build/casadi-build/:/home/travis/build/casadi/python-optistack/
-language: cpp
+  - export PYTHONPATH=$PYTHONPATH:/home/travis/build/casadi-build/:/home/travis/build/casadi/python-optistack/
