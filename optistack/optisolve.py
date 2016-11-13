@@ -57,8 +57,10 @@ class optisolve:
             codegen = options["codegen"]
             del options["codegen"]
         
+        opt = {}
         if codegen:
             options["jit"] = True
+            opt["jit"] = True
         
         gl_pure_v = C.MX()
         if len(gl_pure)>0:
