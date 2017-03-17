@@ -38,9 +38,9 @@ print optival(x) # [-1;-1;0]
 Installation:
  * Obtain CasADi for your version of Python:
 
-Windows   |   Linux     |    Mac
+| Windows   |   Linux     |    Mac
 ----------|-------------|--------------
-[Python 2.7](http://files.casadi.org/3.1.0/windows/casadi-py27-np1.9.1-v3.1.0.zip)  |    [Python 2.7](http://files.casadi.org/3.1.0/linux/casadi-py27-np1.9.1-v3.1.0.tar.gz) or later      | [Python 2.7](http://files.casadi.org/3.1.0/osx/casadi-py27-np1.9.1-v3.1.0.tar.gz) or later
+| [Python 2.7](http://files.casadi.org/3.1.0/windows/casadi-py27-np1.9.1-v3.1.0.zip)  |    [Python 2.7](http://files.casadi.org/3.1.0/linux/casadi-py27-np1.9.1-v3.1.0.tar.gz) or later      | [Python 2.7](http://files.casadi.org/3.1.0/osx/casadi-py27-np1.9.1-v3.1.0.tar.gz) or later
 
  * Add the unzipped directory to the Python path (`import sys;sys.path.append(r"casadi_unzippeddir")`)
  * Obtain [Optistack](https://github.com/casadi/python-optistack/archive/master.zip) and unzip it.
@@ -50,12 +50,12 @@ Windows   |   Linux     |    Mac
 
 Cheat sheet:
 
-                          |  Yalmip                     | Optistack
+|                          |  Yalmip                     | Optistack
 ------------------------- | --------------------------- | -----------------------------
-Declare decision variable | `x = sdpvar(nrows,ncols)`   | `x = optivar(nrows,ncols)`
-Set initial values        | `assign(x,x0)`              | `x.setInit(x0)`
-Solve a problem           | `optimize([x==0],f)`        | `optisolve(f,[x==0])`
-Obtain numeric results    | `value(x)`                  | `optival(x)`
+| Declare decision variable | `x = sdpvar(nrows,ncols)`   | `x = optivar(nrows,ncols)`
+| Set initial values        | `assign(x,x0)`              | `x.setInit(x0)`
+| Solve a problem           | `optimize([x==0],f)`        | `optisolve(f,[x==0])`
+| Obtain numeric results    | `value(x)`                  | `optival(x)`
 
 
 More functionality:
