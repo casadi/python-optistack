@@ -17,7 +17,7 @@ def optival( *args ):
        symbols+=symbols_struct["p"]
        hassymbols = True
     if not hassymbols:
-      symbols = [MX.sym("dummy")]
+      symbols = [C.MX.sym("dummy")]
        
     f = C.Function('f',symbols,args);
     f_inputs = [];
